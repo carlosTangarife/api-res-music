@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Genre = require('../models/genre');
+const Genre = require('./genre');
 
 const ArtistsSchema = new Schema({
   name:{
