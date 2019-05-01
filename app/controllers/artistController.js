@@ -18,7 +18,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/artists', (req, res, next) => {
-  Artist.find({}).populate("Genre", "name").exec((err, artists) => {
+  Artist.find({}).populate("Genre").exec((err, artists) => {
     if (err) {
       return res.status(500).send({message: 'error to do request' + err});
     }
