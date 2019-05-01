@@ -5,7 +5,8 @@ const GenresSchema = new Schema({
   name:{
     type: String,
     default: null,
-    required: true
+    required: true,
+    unique: true
   }
 });
 
