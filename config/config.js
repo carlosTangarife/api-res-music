@@ -9,7 +9,7 @@ const config = {
       name: 'api-music'
     },
     port: process.env.PORT || 3000,
-    db: 'mongodb://localhost/api-music-development'
+    db: 'mongodb://carlos:c4r10s@clustercarlos-shard-00-00-loyt5.mongodb.net:27017,clustercarlos-shard-00-01-loyt5.mongodb.net:27017,clustercarlos-shard-00-02-loyt5.mongodb.net:27017/music?ssl=true&replicaSet=clusterCarlos-shard-0&authSource=admin&retryWrites=true'
   },
 
   test: {
@@ -18,7 +18,7 @@ const config = {
       name: 'api-music'
     },
     port: process.env.PORT || 3000,
-    db: 'mongodb://localhost/api-music-test'
+    db: 'mongodb://carlos:c4r10s@clustercarlos-shard-00-00-loyt5.mongodb.net:27017,clustercarlos-shard-00-01-loyt5.mongodb.net:27017,clustercarlos-shard-00-02-loyt5.mongodb.net:27017/music?ssl=true&replicaSet=clusterCarlos-shard-0&authSource=admin&retryWrites=true'
   },
 
   production: {
@@ -27,7 +27,7 @@ const config = {
       name: 'api-music'
     },
     port: process.env.PORT || 3000,
-    db: 'mongodb://localhost/api-music-production'
+    db: 'mongodb://carlos:c4r10s@clustercarlos-shard-00-00-loyt5.mongodb.net:27017,clustercarlos-shard-00-01-loyt5.mongodb.net:27017,clustercarlos-shard-00-02-loyt5.mongodb.net:27017/music?ssl=true&replicaSet=clusterCarlos-shard-0&authSource=admin&retryWrites=true'
   }
 };
 
