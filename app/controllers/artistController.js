@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Artist = mongoose.model('Artist');
-
+const Genre = mongoose.model('Genre');
 module.exports = (app) => {
   app.use('/', router);
 };
@@ -18,13 +18,18 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/artists', (req, res, next) => {
-  Artist.find({}).populate("Genre").exec((err, artists) => {
+  Artist.find((err, artists) => {
     if (err) {
       return res.status(500).send({message: 'error to do request' + err});
     }
-
     if(!artists) return res.status(404).send({message: 'no found artists'});
-    res.status(200).send({artists});
+    Genre.populate(artists, {path: 'genre'}, function (err, genres) {
+      if (err) {
+        return res.status(500).send({message: 'error to do request' + err});
+      }
+      res.status(200).send({artists});
+    })
+
   });
 });
 
