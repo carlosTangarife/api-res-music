@@ -23,9 +23,9 @@ router.post('/user', (req, res) => {
         });
     }
     res.status(201).json({
-        ok: true,
-        token: jwt.createToken(user)
-      });
+      ok: true,
+      token: jwt.createToken(user)
+    });
   });
 });
 
@@ -91,3 +91,19 @@ function handlerError(res, err) {
   });
 }
 
+router.post('/validateToken', (req, res) => {
+  const token = req.body.token;
+  jwt.decodeToken(token)
+    .then(() => {
+      return res.status(201).json({
+        ok: true,
+        message: "Token is Corrected"
+      });
+    })
+    .catch(err => {
+      return res.status(err.status).json({
+        ok: false,
+        message: err.message
+      });
+    })
+})
