@@ -2,45 +2,46 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Song = mongoose.model('Song');
+const Album = mongoose.model('Album');
 
-module.exports = (app) => {
-  app.use('/', router);
-};
+const isAuth = require('../middleware/auth');
+module.exports = (app) => app.use('/', router)
 
-router.get('/', (req, res, next) => {
+
+router.get('/songs', isAuth, (req, res) => {
   Song.find((err, songs) => {
-    if (err) return next(err);
-    res.render('index', {
-      title: 'Generator-Express MVC',
-      songs: songs
-    });
-  });
-});
-
-router.get('/songs', (req, res, next) => {
-  Song.find({}).populate("Artist").populate("Album").exec((err, songs) => {
     if (err) {
       return res.status(500).send({message: 'error to do request' + err});
     }
 
     if(!songs) return res.status(404).send({message: 'no found songs'});
-    res.status(200).send({songs});
+    Album.populate(songs, {path: 'album'}, function (err) {
+      if (err) {
+        return res.status(500).send({message: 'error to do request' + err});
+      }
+      res.status(200).send({songs});
+    })
   });
 });
 
-router.get('/song/:songId', (req, res, next) => {
+router.get('/song/:songId', isAuth, (req, res) => {
   let songId = req.params.songId;
-  Song.findById(songId).populate("Artist").populate("Album").exec((err, songs) => {
+  Song.findById(songId,(err, song) => {
     if (err) {
       return res.status(500).send({message: 'error to do request' + err});
     }
 
-    if(!songs) return res.status(404).send({message: 'no found songs'});
-    res.status(200).send({songs});
+    if(!song) return res.status(404).send({message: 'no found song'});
+    Album.populate(song, {path: 'album'}, function (err) {
+      if (err) {
+        return res.status(500).send({message: 'error to do request' + err});
+      }
+      res.status(200).send({song});
+    })
   });
 });
 
-router.post('/song', (req, res, next) => {
+router.post('/song', isAuth, (req, res) => {
   let song = new Song();
   song.number = req.body.number;
   song.name = req.body.name;
@@ -63,7 +64,7 @@ router.post('/song', (req, res, next) => {
   });
 });
 
-router.put('/song/:songId', (req, res, next) => {
+router.put('/song/:songId', isAuth, (req, res) => {
   let songId = req.params.songId;
 
   Song.findByIdAndUpdate(songId, req.body, (err, articleUpdated) => {
@@ -81,7 +82,7 @@ router.put('/song/:songId', (req, res, next) => {
   });
 });
 
-router.delete('/song/:songId', (req, res, next) => {
+router.delete('/song/:songId', isAuth, (req, res) => {
   let songId = req.params.songId;
 
   Song.findByIdAndRemove(songId, req.body, (err) => {

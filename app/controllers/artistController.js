@@ -3,21 +3,11 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Artist = mongoose.model('Artist');
 const Genre = mongoose.model('Genre');
-module.exports = (app) => {
-  app.use('/', router);
-};
 
-router.get('/', (req, res, next) => {
-  Artist.find((err, artists) => {
-    if (err) return next(err);
-    res.render('index', {
-      title: 'Generator-Express MVC',
-      artists: artists
-    });
-  });
-});
+const isAuth = require('../middleware/auth');
+module.exports = (app) => app.use('/', router)
 
-router.get('/artists', (req, res, next) => {
+router.get('/artists', isAuth, (req, res) => {
   Artist.find((err, artists) => {
     if (err) {
       return res.status(500).send({message: 'error to do request' + err});
@@ -33,7 +23,7 @@ router.get('/artists', (req, res, next) => {
   });
 });
 
-router.get('/artist/:artistId', (req, res, next) => {
+router.get('/artist/:artistId', isAuth, (req, res) => {
   let artistId = req.params.artistId;
   Artist.findById(artistId, (err, artist) => {
     if (err) {
@@ -41,12 +31,16 @@ router.get('/artist/:artistId', (req, res, next) => {
     }
 
     if(!artist) return res.status(404).send({message: 'no found artist'});
-
-    res.status(200).send({artist});
+    Genre.populate(artist, {path: 'genre'}, function (err) {
+      if (err) {
+        return res.status(500).send({message: 'error to do request' + err});
+      }
+      res.status(200).send({artist});
+    })
   });
 });
 
-router.post('/artist', (req, res, next) => {
+router.post('/artist', isAuth, (req, res) => {
   let artist = new Artist();
   artist.name = req.body.name;
   artist.description = req.body.description;
@@ -68,7 +62,7 @@ router.post('/artist', (req, res, next) => {
   });
 });
 
-router.put('/artist/:artistId', (req, res, next) => {
+router.put('/artist/:artistId', isAuth, (req, res) => {
   let artistId = req.params.artistId;
 
   Artist.findByIdAndUpdate(artistId, req.body, (err, articleUpdated) => {
@@ -86,7 +80,7 @@ router.put('/artist/:artistId', (req, res, next) => {
   });
 });
 
-router.delete('/artist/:artistId', (req, res, next) => {
+router.delete('/artist/:artistId', isAuth, (req, res) => {
   let artistId = req.params.artistId;
 
   Artist.findByIdAndRemove(artistId, req.body, (err) => {

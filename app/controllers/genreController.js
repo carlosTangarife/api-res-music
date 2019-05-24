@@ -3,21 +3,11 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Genre = mongoose.model('Genre');
 
-module.exports = (app) => {
-  app.use('/', router);
-};
+const isAuth = require('../middleware/auth');
+module.exports = (app) => app.use('/', router)
 
-router.get('/', (req, res, next) => {
-  Genre.find((err, genres) => {
-    if (err) return next(err);
-    res.render('index', {
-      title: 'Generator-Express MVC',
-      genres: genres
-    });
-  });
-});
 
-router.get('/genres', (req, res, next) => {
+router.get('/genres', isAuth, (req, res) => {
   Genre.find((err, genres) => {
     if (err) {
       return res.status(500).send({message: 'error to do request' + err});
@@ -29,7 +19,7 @@ router.get('/genres', (req, res, next) => {
   });
 });
 
-router.get('/genre/:genreId', (req, res, next) => {
+router.get('/genre/:genreId', isAuth, (req, res) => {
   let genreId = req.params.genreId;
   Genre.findById(genreId, (err, genre) => {
     if (err) {
@@ -42,7 +32,7 @@ router.get('/genre/:genreId', (req, res, next) => {
   });
 });
 
-router.post('/genre', (req, res, next) => {
+router.post('/genre', isAuth, (req, res) => {
   let genre = new Genre();
   genre.name = req.body.name;
 
@@ -61,7 +51,7 @@ router.post('/genre', (req, res, next) => {
   });
 });
 
-router.put('/genre/:genreId', (req, res, next) => {
+router.put('/genre/:genreId', isAuth, (req, res) => {
   let genreId = req.params.genreId;
 
   Genre.findByIdAndUpdate(genreId, req.body, (err, articleUpdated) => {
@@ -79,7 +69,7 @@ router.put('/genre/:genreId', (req, res, next) => {
   });
 });
 
-router.delete('/genre/:genreId', (req, res, next) => {
+router.delete('/genre/:genreId', isAuth, (req, res) => {
   let genreId = req.params.genreId;
 
   Genre.findByIdAndRemove(genreId, req.body, (err) => {

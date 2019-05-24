@@ -3,21 +3,11 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Category = mongoose.model('Category');
 
-module.exports = (app) => {
-  app.use('/', router);
-};
+const isAuth = require('../middleware/auth');
+module.exports = (app) => app.use('/', router)
 
-router.get('/', (req, res, next) => {
-  Category.find((err, categories) => {
-    if (err) return next(err);
-    res.render('index', {
-      title: 'Generator-Express MVC',
-      categories: categories
-    });
-  });
-});
 
-router.get('/categories', (req, res, next) => {
+router.get('/categories', isAuth, (req, res) => {
   Category.find((err, categories) => {
     if (err) {
       return res.status(500).send({message: 'error to do request' + err});
@@ -29,7 +19,7 @@ router.get('/categories', (req, res, next) => {
   });
 });
 
-router.get('/category/:categoryId', (req, res, next) => {
+router.get('/category/:categoryId', isAuth, (req, res) => {
   let categoryId = req.params.categoryId;
   Category.findById(categoryId, (err, category) => {
     if (err) {
@@ -42,7 +32,7 @@ router.get('/category/:categoryId', (req, res, next) => {
   });
 });
 
-router.post('/category', (req, res, next) => {
+router.post('/category', isAuth, (req, res) => {
   let category = new Category();
   category.name = req.body.name;
 
@@ -61,7 +51,7 @@ router.post('/category', (req, res, next) => {
   });
 });
 
-router.put('/category/:categoryId', (req, res, next) => {
+router.put('/category/:categoryId', isAuth, (req, res) => {
   let categoryId = req.params.categoryId;
 
   Category.findByIdAndUpdate(categoryId, req.body, (err, articleUpdated) => {
@@ -79,7 +69,7 @@ router.put('/category/:categoryId', (req, res, next) => {
   });
 });
 
-router.delete('/category/:categoryId', (req, res, next) => {
+router.delete('/category/:categoryId', isAuth, (req, res) => {
   let categoryId = req.params.categoryId;
 
   Category.findByIdAndRemove(categoryId, req.body, (err) => {

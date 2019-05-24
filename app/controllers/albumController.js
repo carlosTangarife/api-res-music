@@ -3,21 +3,10 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Album = mongoose.model('Album');
 
-module.exports = (app) => {
-  app.use('/', router);
-};
+const isAuth = require('../middleware/auth');
+module.exports = (app) => app.use('/', router)
 
-router.get('/', (req, res, next) => {
-  Album.find((err, albums) => {
-    if (err) return next(err);
-    res.render('index', {
-      title: 'Generator-Express MVC',
-      albums: albums
-    });
-  });
-});
-
-router.get('/albums', (req, res, next) => {
+router.get('/albums', isAuth, (req, res) => {
   Album.find({}).populate("Artist").populate("Category").exec((err, albums) => {
     if (err) {
       return res.status(500).send({message: 'error to do request' + err});
@@ -28,7 +17,7 @@ router.get('/albums', (req, res, next) => {
   });
 });
 
-router.get('/album/:albumId', (req, res, next) => {
+router.get('/album/:albumId', isAuth, (req, res) => {
   let albumId = req.params.albumId;
   Album.findById(albumId).populate("Artist").populate("Category").exec((err, albums) => {
     if (err) {
@@ -40,7 +29,7 @@ router.get('/album/:albumId', (req, res, next) => {
   });
 });
 
-router.post('/album', (req, res, next) => {
+router.post('/album', isAuth, (req, res) => {
   let album = new Album();
   album.title = req.body.title;
   album.description = req.body.description;
@@ -64,7 +53,7 @@ router.post('/album', (req, res, next) => {
   });
 });
 
-router.put('/album/:albumId', (req, res, next) => {
+router.put('/album/:albumId', isAuth, (req, res) => {
   let albumId = req.params.albumId;
 
   Album.findByIdAndUpdate(albumId, req.body, (err, articleUpdated) => {
@@ -82,7 +71,7 @@ router.put('/album/:albumId', (req, res, next) => {
   });
 });
 
-router.delete('/album/:albumId', (req, res, next) => {
+router.delete('/album/:albumId', isAuth, (req, res) => {
   let albumId = req.params.albumId;
 
   Album.findByIdAndRemove(albumId, req.body, (err) => {

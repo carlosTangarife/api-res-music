@@ -29,7 +29,7 @@ router.post('/user', (req, res) => {
   });
 });
 
-router.get('/users', isAuth, (req, res, next) => {
+router.get('/users', isAuth, (req, res) => {
   User.find((err, users) => {
     if (err) {
       return res.status(500).send({message: 'error to do request' + err});
